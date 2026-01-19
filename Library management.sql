@@ -1,0 +1,97 @@
+create database library;
+use library;
+create table books(
+BookID int primary key,
+Title varchar(50) Not Null,
+Author varchar(30),
+Genre varchar(20),
+PublishedYear year, 
+CopiesAvailable int);
+
+create table members(
+MemberID int,
+Name varchar(30),
+MembershipDate date,
+Email varchar(30),
+PhoneNumber varchar(20),
+primary key(MemberID));
+
+create table borrowing(
+BorrowID int primary key,
+BookID int,
+MemberID int,
+BorrowDate date,
+ReturnDate date);
+
+INSERT INTO Books (BookID, Title, Author, Genre, PublishedYear, CopiesAvailable) VALUES 
+(1, 'To Kill a Mockingbird', 'Harper Lee', 'Fic on', 1960, 5), 
+(2, '1984', 'George Orwell', 'Dystopian', 1949, 3), 
+(3, 'Moby Dick', 'Herman Melville', 'Adventure', 1851, 4), 
+(4, 'The Great Gatsby', 'F. Sco Fitzgerald', 'Classic', 1925, 2), 
+(5, 'Pride and Prejudice', 'Jane Austen', 'Romance', 1813, 6), 
+(6, 'The Catcher in the Rye', 'J.D. Salinger', 'Fic on', 1951, 4), 
+(7, 'The Hobbit', 'J.R.R. Tolkien', 'Fantasy', 1937, 7), 
+(8, 'The Da Vinci Code', 'Dan Brown', 'Thriller', 2003, 5), 
+(9, 'The Alchemist', 'Paulo Coelho', 'Philosophy', 1988, 6), 
+(10, 'War and Peace', 'Leo Tolstoy', 'Historical Fic on', 1869, 3);
+
+alter table books modify PublishedYear int;
+
+INSERT INTO Members (MemberID, Name, MembershipDate, Email, PhoneNumber) VALUES 
+(1, 'Alice Johnson', '2022-01-15', 'alice@example.com', '123-456-7890'), 
+(2, 'Bob Smith', '2023-03-10', 'bob@example.com', '234-567-8901'), 
+(3, 'Charlie Brown', '2021-11-25', 'charlie@example.com', '345-678-9012'), 
+(4, 'Diana Prince', '2020-07-05', 'diana@example.com', '456-789-0123'), 
+(5, 'Evan Parker', '2022-06-30', 'evan@example.com', '567-890-1234'), 
+(6, 'Frank Castle', '2023-01-01', 'frank@example.com', '678-890-2345'), 
+(7, 'Grace Hopper', '2022-11-30', 'grace@example.com', '789-012-3456'), 
+(8, 'Hannah Baker', '2021-09-15', 'hannah@example.com', '890-123-4567'), 
+(9, 'Isaac Newton', '2023-04-05', 'isaac@example.com', '901-234-5678'), 
+(10, 'Jack Ryan', '2022-03-22', 'jack@example.com', '012-345-6789');
+INSERT INTO Borrowing (BorrowID, BookID, MemberID, BorrowDate, ReturnDate) VALUES 
+(11,2,3,"2025-07-21",null);
+INSERT INTO Borrowing (BorrowID, BookID, MemberID, BorrowDate, ReturnDate) VALUES 
+(1, 1, 1, '2023-01-10', '2023-01-20'), 
+(2, 2, 2, '2023-02-15', '2023-02-25'), 
+(3, 3, 3, '2023-03-05', NULL), 
+(4, 4, 4, '2023-04-01', '2023-04-15'), 
+(5, 5, 5, '2023-05-20', NULL), 
+(6, 6, 6, '2023-01-10', '2023-01-20'), 
+(7, 7, 7, '2023-02-05', '2023-02-15'), 
+(8, 8, 8, '2023-03-10', NULL), 
+(9, 9, 9, '2023-04-20', '2023-05-01'), 
+(10, 10, 10, '2023-05-25', NULL); 
+
+select * from books;
+
+select * from members where membershipdate > "2022-01-01";
+
+select title from books where copiesavailable <3;
+
+select name,title,borrowdate,returndate from borrowing b
+join books k on b.bookid=k.bookid
+join members m on b.memberid=m.memberid;
+
+select title, borrowdate from borrowing b
+join books k on b.bookid=k.bookid
+where returndate is null;
+
+select name, count(distinct(genre)) from borrowing b
+join books k on b.bookid=k.bookid
+join members m on b.memberid=m.memberid
+group by name having count(distinct(genre))>=3;
+
+select title, count(bookid) from books 
+group by title order by count(bookid) desc limit 3;
+
+select genre, count(bookid) from books 
+group by genre;
+
+select * from borrowing where memberid=3;
+
+select title, borrowdate from borrowing b 
+join books k on b.bookid=k.bookid
+where borrowdate>=date_sub(current_date(),interval 30 day);
+
+select avg(datediff(returndate,borrowdate)) from borrowing 
+where returndate is not null;
